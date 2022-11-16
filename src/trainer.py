@@ -1,4 +1,5 @@
 import lightgbm as lgbm
+
 # [MLRun] Import MLRun:
 import mlrun
 import pandas as pd
@@ -30,10 +31,10 @@ def train(
         min_child_samples=min_child_samples,
     )
 
-    # -------------------- The only line you need to add for MLOps -------------------------
-    # Wraps the model with MLOps (test set is provided for analysis & accuracy measurements)
+    # -------------- The only line you need to add for MLOps --------------------
+    # Wraps the model with MLOps (test set is provided for analysis)
     apply_mlrun(model=model, model_name=model_name, x_test=x_test, y_test=y_test)
-    # --------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------
 
     model.fit(X=x_train, y=y_train)
 

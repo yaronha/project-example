@@ -1,5 +1,6 @@
-from kfp import dsl
 import mlrun
+from kfp import dsl
+
 
 # Create a Kubeflow Pipelines pipeline
 @dsl.pipeline(name="breast-cancer-demo")

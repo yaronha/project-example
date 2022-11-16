@@ -1,2 +1,3 @@
 mlrun==1.2.0-rc10
-scikit-learn
+lightgbm~=3.3.0
+scikit-learn==1.0.2

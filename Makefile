@@ -32,8 +32,8 @@ clean: ## Clean python package build artifacts
 .PHONY: fmt
 fmt: ## Format the code (using black and isort)
 	@echo "Running black fmt..."
-	$(PYTHON_INTERPRETER) -m black .
-	$(PYTHON_INTERPRETER) -m isort .
+	$(PYTHON_INTERPRETER) -m black src tests
+	$(PYTHON_INTERPRETER) -m isort src tests
 
 .PHONY: lint
 lint: fmt-check flake8 ## Run lint on the code
@@ -41,13 +41,13 @@ lint: fmt-check flake8 ## Run lint on the code
 .PHONY: fmt-check
 fmt-check: ## Format and check the code (using black and isort)
 	@echo "Running black+isort fmt check..."
-	$(PYTHON_INTERPRETER) -m black --check --diff .
-	$(PYTHON_INTERPRETER) -m isort --check --diff .
+	$(PYTHON_INTERPRETER) -m black --check --diff src tests
+	$(PYTHON_INTERPRETER) -m isort --check --diff src tests
 
 .PHONY: flake8
 flake8: ## Run flake8 lint
 	@echo "Running flake8 lint..."
-	$(PYTHON_INTERPRETER) -m flake8 .
+	$(PYTHON_INTERPRETER) -m flake8 src tests
 
 
 .PHONY: test
