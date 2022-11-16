@@ -1,11 +1,11 @@
 import pandas as pd
 
-from src.data_prep import *
+from src import data_prep
 
 
 def test_data_preparation_pipline():
     df = get_data()
-    train, test, label = data_preparation(df, 0.2)
+    train, test, label = data_prep.data_preparation(df, 0.2)
 
     assert label == "fare_amount"
 
@@ -16,7 +16,7 @@ def test_data_preparation_pipline():
 
 def test_clean_df():
     df = get_data()
-    df = clean_df(df)
+    df = data_prep.clean_df(df)
 
     # check if df contains unexpected values
     assert 0 in df["fare_amount"]
@@ -24,4 +24,4 @@ def test_clean_df():
 
 
 def get_data():
-    return pd.read_csv("../data/dataset.csv")
+    return pd.read_csv("./data/dataset.csv")
