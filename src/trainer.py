@@ -1,33 +1,33 @@
-import pandas as pd
-
-from sklearn import ensemble
-from sklearn.model_selection import train_test_split
-
+import lightgbm as lgbm
+# [MLRun] Import MLRun:
 import mlrun
-from mlrun.frameworks.sklearn import apply_mlrun
+import pandas as pd
+from mlrun.frameworks.lgbm import apply_mlrun
+from sklearn.model_selection import train_test_split
 
 
 @mlrun.handler()
 def train(
-    dataset: pd.DataFrame,
-    label_column: str = "label",
-    n_estimators: int = 100,
-    learning_rate: float = 0.1,
-    max_depth: int = 3,
-    model_name: str = "cancer_classifier",
+    train_set: pd.DataFrame,
+    label_column: str = "fare_amount",
+    model_name: str = "lgbm_ny_taxi",
+    boosting_type: str = "gbdt",
+    subsample: float = 0.8,
+    min_split_gain: float = 0.5,
+    min_child_samples: int = 10,
 ):
-    # Initialize the x & y data
-    x = dataset.drop(label_column, axis=1)
-    y = dataset[label_column]
+    y = train_set[label_column]
+    train_df = train_set.drop(columns=[label_column])
 
-    # Train/Test split the dataset
     x_train, x_test, y_train, y_test = train_test_split(
-        x, y, test_size=0.2, random_state=42
+        train_df, y, random_state=123, test_size=0.10
     )
 
-    # Pick an ideal ML model
-    model = ensemble.GradientBoostingClassifier(
-        n_estimators=n_estimators, learning_rate=learning_rate, max_depth=max_depth
+    model = lgbm.LGBMRegressor(
+        boosting_type=boosting_type,
+        subsample=subsample,
+        min_split_gain=min_split_gain,
+        min_child_samples=min_child_samples,
     )
 
     # -------------------- The only line you need to add for MLOps -------------------------
@@ -35,5 +35,6 @@ def train(
     apply_mlrun(model=model, model_name=model_name, x_test=x_test, y_test=y_test)
     # --------------------------------------------------------------------------------------
 
-    # Train the model
-    model.fit(x_train, y_train)
+    model.fit(X=x_train, y=y_train)
+
+    return model

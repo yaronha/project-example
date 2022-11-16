@@ -15,13 +15,13 @@ def pipeline(model_name="cancer-classifier"):
     train = mlrun.run_function(
         "hub://auto_trainer",
         inputs={"dataset": ingest.outputs["dataset"]},
-        params = {
+        params={
             "model_class": "sklearn.ensemble.RandomForestClassifier",
             "train_test_split_size": 0.2,
             "label_columns": "label",
             "model_name": model_name,
         },
-        handler='train',
+        handler="train",
         outputs=["model"],
     )
 
@@ -34,7 +34,7 @@ def pipeline(model_name="cancer-classifier"):
             {
                 "key": model_name,
                 "model_path": train.outputs["model"],
-                "class_name": 'mlrun.frameworks.sklearn.SklearnModelServer',
+                "class_name": "mlrun.frameworks.sklearn.SklearnModelServer",
             }
         ],
     )
