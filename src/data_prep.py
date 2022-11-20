@@ -17,33 +17,45 @@ def data_preparation(dataset: pd.DataFrame, test_size=0.2):
     """
 
     # preform all the steps on the dataset
-    dataset = clean_df(dataset)
+    dataset = clean_df(dataset).dropna(how="any", axis="rows")
     dataset = add_datetime_info(
         sphere_dist_step(
             sphere_dist_bear_step(
                 radian_conv_step(
-                    add_airport_dist(dataset.dropna(how="any", axis="rows"))
+                    add_airport_dist(dataset)
                 )
             )
         )
     ).drop(columns=["key", "pickup_datetime"])
-
-    train, test = train_test_split(dataset, test_size=test_size)
+    if test_size != 0:
+        train, test = train_test_split(dataset, test_size=test_size)
+    else:
+        train, test = dataset, dataset
     return train, test, "fare_amount"
 
 
 # ---- STEPS -------
 def clean_df(df):
-    return df[
-        (df.fare_amount > 0)
-        & (df.fare_amount <= 500)
-        & (
-            (df.pickup_longitude != 0)
-            & (df.pickup_latitude != 0)
-            & (df.dropoff_longitude != 0)
-            & (df.dropoff_latitude != 0)
-        )
-    ]
+    if "fare_amount" in df.columns:
+        return df[
+            (df.fare_amount > 0)
+            & (df.fare_amount <= 500)
+            & (
+                (df.pickup_longitude != 0)
+                & (df.pickup_latitude != 0)
+                & (df.dropoff_longitude != 0)
+                & (df.dropoff_latitude != 0)
+            )
+        ]
+    else:
+        return df[
+            (
+                (df.pickup_longitude != 0)
+                & (df.pickup_latitude != 0)
+                & (df.dropoff_longitude != 0)
+                & (df.dropoff_latitude != 0)
+            )
+        ]
 
 
 def add_airport_dist(df):
@@ -91,11 +103,11 @@ def add_datetime_info(df):
     df["pickup_datetime"] = pd.to_datetime(
         df["pickup_datetime"], format="%Y-%m-%d %H:%M:%S UTC"
     )
-    df["hour"] = df.pickup_datetime.dt.hour
-    df["day"] = df.pickup_datetime.dt.day
-    df["month"] = df.pickup_datetime.dt.month
-    df["weekday"] = df.pickup_datetime.dt.weekday
-    df["year"] = df.pickup_datetime.dt.year
+    df["timestamp_hour"] = df.pickup_datetime.dt.hour
+    df["timestamp_day"] = df.pickup_datetime.dt.day
+    df["timestamp_month"] = df.pickup_datetime.dt.month
+    df["timestamp_weekday"] = df.pickup_datetime.dt.weekday
+    df["timestamp_year"] = df.pickup_datetime.dt.year
     return df
 
 

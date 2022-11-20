@@ -49,7 +49,11 @@ flake8: ## Run flake8 lint
 	@echo "Running flake8 lint..."
 	$(PYTHON_INTERPRETER) -m flake8 src tests
 
-
 .PHONY: test
 test: clean ## Run tests
 	$(PYTHON_INTERPRETER) -m pytest -v --capture=no --disable-warnings -rf tests
+
+.PHONY: local-mlrun
+local-mlrun: ## Run MLRun DB locally
+	$(PYTHON_INTERPRETER) -m pip install uvicorn~=0.17.0 dask-kubernetes~=0.11.0 apscheduler~=3.6 sqlite3-to-mysql~=1.4
+	mlrun db -b

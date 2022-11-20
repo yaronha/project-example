@@ -3,7 +3,7 @@ import pandas as pd
 from src import data_prep
 
 
-def test_data_preparation_pipline():
+def test_data_preparation():
     df = get_data()
     train, test, label = data_prep.data_preparation(df, 0.2)
 
